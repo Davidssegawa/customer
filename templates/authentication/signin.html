@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'style\signin.css' %}">
+</head>
+<body>
+
+    {% for message in messages %}
+    <div class="alert alert-{{message.tags}} alert-dismissible show" role = "alert">
+        <strong>Message</strong> {{message}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endfor %}
+
+<div class= "form-container">
+    <h3>Water Monitoring System login</h3>
+    <div class="form-element">
+        <form action="/signin" method="POST">
+        {% csrf_token %}
+            <div class="sec1">
+                <label for="">Username</label>
+                <input type="text" name="username" id="username" placeholder="Enter Username" Required>
+            </div>
+            
+
+            <div class="sec2">
+                <label for="">Password</label>
+                <input type="password" name="pass1" id="pass1" placeholder="Enter password" Required>
+            </div>
+            
+            <br>
+
+            <div class ="sec3">
+                <button type="submit" class=" justify-content-center">Login</button>
+            </div>
+            
+        </form>
+    </div>
+</div>
+</body>
+</html>
