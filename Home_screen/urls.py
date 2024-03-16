@@ -12,5 +12,5 @@ urlpatterns =[
     #path('map/',views.map, name='map'),
     path('statistics/',views.statistics,name='statistics'),
     path('registermeter/',views.registerMeter,name='registermeter'),
-
+    path('webhook/ttn/', views.ttn_webhook),
 ]

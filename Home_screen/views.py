@@ -6,9 +6,10 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required 
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.edit import CreateView
 from .models import Address
-
+import json
 
 def index(request):
     return render(request,'authentication/index.html')
@@ -65,3 +66,10 @@ class AddressView(CreateView):
     fields = ['address']
     template_name = 'sections/Map.html'
     success_url = '/' 
+
+
+@csrf_exempt
+def ttn_webhook(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        print(data)
