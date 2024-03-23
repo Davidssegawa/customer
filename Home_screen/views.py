@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.edit import CreateView
-from .models import Address
+from .models import Meter_Address
 import json
 
 def index(request):
@@ -62,11 +62,16 @@ def registerMeter(request):
 
 #@login_required(login_url='signin')
 class AddressView(CreateView):
-    model = Address
+    model = Meter_Address
     fields = ['address']
     template_name = 'sections/Map.html'
     success_url = '/' 
 
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        context['mapbox_access_token'] = 'pk.eyJ1Ijoic3NlZ2F3YWpvZTgiLCJhIjoiY2xzNjB5YWhsMXJocjJqcGNjazNuenM1dyJ9.oWRkBvrevz2HGD3oWLFdWw'
+        context["addresses"] = Meter_Address.objects.all()
+        return context
 
 @csrf_exempt
 def ttn_webhook(request):

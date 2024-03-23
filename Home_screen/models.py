@@ -13,7 +13,7 @@ class Meter_Address(models.Model):
         g = g.latlng
         self.lat = g[0]
         self.long = g[1]
-        return super(Address, self).save(*args,**kwargs)
+        return super(Meter_Address, self).save(*args,**kwargs)
 
 
 
