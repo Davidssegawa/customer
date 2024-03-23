@@ -3,7 +3,7 @@ from django.db import models
 
 map_box_access_token = 'pk.eyJ1Ijoic3NlZ2F3YWpvZTgiLCJhIjoiY2xzNjB5YWhsMXJocjJqcGNjazNuenM1dyJ9.oWRkBvrevz2HGD3oWLFdWw'
 # Create your models here.
-class Address(models.Model):
+class Meter_Address(models.Model):
     address = models.TextField()
     lat = models.FloatField(blank=True,null=True)
     long = models.FloatField(blank=True,null=True)
@@ -15,8 +15,7 @@ class Address(models.Model):
         self.long = g[1]
         return super(Address, self).save(*args,**kwargs)
 
-class Reg_meter(models.Model):
-    
+
 
 '''class Meter_data(models.Model):
     time = models.DateTimeField()     
