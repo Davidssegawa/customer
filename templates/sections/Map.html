@@ -10,9 +10,6 @@
 </head>
 <body>
     
-    {% block content %}
-    {% include 'navbar.html'%}
-    
     <div id='map' style='width: 100%; height: 700px;'></div>
     <script>
     mapboxgl.accessToken = 'pk.eyJ1Ijoic3NlZ2F3YWpvZTgiLCJhIjoiY2xzNjB5YWhsMXJocjJqcGNjazNuenM1dyJ9.oWRkBvrevz2HGD3oWLFdWw';
@@ -26,7 +23,6 @@
         .setLngLat([-77.727127,39.52037])
         .addTo(map);*/
     </script>
-    {% endblock%}
     
     
 </body>
