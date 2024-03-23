@@ -14,4 +14,9 @@ class Address(models.Model):
         self.lat = g[0]
         self.long = g[1]
         return super(Address, self).save(*args,**kwargs)
-        
+
+'''class Meter_data(models.Model):
+    time = models.DateTimeField()     
+    Water_consumption = models.FloatField()
+
+class Meter'''
