@@ -8,7 +8,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.edit import CreateView
-from .models import Meter_Address
+from .models import Meter_Address,Meter_data 
+from django.http import JsonResponse
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import MeterDataSerializer
 import json
 
 def index(request):
@@ -77,4 +81,20 @@ class AddressView(CreateView):
 def ttn_webhook(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
-        print(data)
+        #print(data)
+
+        timestamp = data.get("timestamp")
+        value = data.get("value")
+
+        meter_data = Meter_data(timestamp=timestamp,value=value)
+        meter_data.save()
+
+        return JsonResponse({'message': 'Data received and saved.'})
+    else:
+        return JsonResponse({'error':'Invalid request method.'}, status=405)
+    
+class MeterDataList(APIView):
+    def get(self,request):
+        meter_data = Meter_data.objects.all()
+        serializer = MeterDataSerializer(meter_data, many=True)
+        return Response(serializer.data)

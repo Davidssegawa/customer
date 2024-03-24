@@ -16,9 +16,8 @@ class Meter_Address(models.Model):
         return super(Meter_Address, self).save(*args,**kwargs)
 
 
-
-'''class Meter_data(models.Model):
-    time = models.DateTimeField()     
+class Meter_data(models.Model):
+    timestamp = models.DateTimeField()     
     Water_consumption = models.FloatField()
 
-class Meter'''
+

@@ -20,14 +20,14 @@
             zoom: 12 // starting zoom
         });
         
-        {% for address in addresses %}
+    </script>
+    
+     {% for address in addresses %}
         var marker = new mapboxgl.Marker()
             .setLngLat([{{ address.long }}, {{ address.lat }}])
             .addTo(map);
         {% endfor %}
-        
-    
-    </script>
+
 
     
 </body>
