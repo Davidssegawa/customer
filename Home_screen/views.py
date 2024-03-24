@@ -70,7 +70,7 @@ class AddressView(CreateView):
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
         context['mapbox_access_token'] = 'pk.eyJ1Ijoic3NlZ2F3YWpvZTgiLCJhIjoiY2xzNjB5YWhsMXJocjJqcGNjazNuenM1dyJ9.oWRkBvrevz2HGD3oWLFdWw'
-        context["addresses"] = Meter_Address.objects.all()
+        context["addresses"] = model.objects.all()
         return context
 
 @csrf_exempt
