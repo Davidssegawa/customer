@@ -14,6 +14,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import MeterDataSerializer
 import json
+from django.utils import timezone
 
 def index(request):
     return render(request,'authentication/index.html')
@@ -69,20 +70,25 @@ def payment(request):
 def ttn_webhook(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
-        #print(data)
+        print(data)
 
-        timestamp = data.get("timestamp")
-        value = data.get("value")
+        timestamp = timezone.now()
 
-        meter_data = Meter_data(timestamp=timestamp,value=value)
+        text = data.get("uplink_message",{}).get('decoded_payload',{}).get('text')
+
+        print("Text:",text)
+        print("Timestamp:",timestamp)
+
+        meter_data = Meter_data(timestamp=timestamp,text=text)
         meter_data.save()
+
 
         return JsonResponse({'message': 'Data received and saved.'})
     else:
         return JsonResponse({'error':'Invalid request method.'}, status=405)
     
 class MeterDataList(APIView):
-    def get(self,request):
+    def get(self):
         meter_data = Meter_data.objects.all()
         serializer = MeterDataSerializer(meter_data, many=True)
         return Response(serializer.data)
