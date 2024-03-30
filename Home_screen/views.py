@@ -102,8 +102,8 @@ def chart_view(request):
     if request.method == 'GET':
         form = DateRangeForm(request.GET)
         if form.is_valid():
-            start_date = form.cleaned_data.get('start_timestamp')
-            end_date = form.cleaned_data.get('end_timestamp')
+            start_date = form.cleaned_data.get('start_date')
+            end_date = form.cleaned_data.get('end_date')
             meter_data = Meter_data.objects.all()
 
             if start_date:
