@@ -109,11 +109,12 @@ def chart_view(request):
             meter_data = meter_data.filter(timestamp__gte=start_timestamp)
         if end_timestamp:
             meter_data = meter_data.filter(timestamp__lte=end_timestamp)
-
+    x_values=[data.timestamp for data in meter_data]
+    y_values=[data.text for data in meter_data]
     # Prepare data for the line chart
     fig = px.line(
-        x=[data.timestamp for data in meter_data],
-        y=[data.text for data in meter_data],
+        x=x_values,
+        y=y_values,
         title="Real-time water usage",
         labels={'x': 'Timestamp', 'y': 'Water measurements'}
     )
