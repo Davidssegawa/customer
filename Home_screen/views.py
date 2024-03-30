@@ -99,23 +99,21 @@ def chart_view(request):
     # Retrieve all Meter_data objects from the database
     meter_data = Meter_data.objects.all()
 
-    if request.method == 'GET':
-        form = DateRangeForm(request.GET)
-        if form.is_valid():
-            start_timestamp = form.cleaned_data.get('start_timestamp')
-            end_timestamp = form.cleaned_data.get('end_timestamp')
-            #meter_data = Meter_data.objects.all()
 
-            if start_timestamp:
-                meter_data = meter_data.filter(timestamp__gte=start_timestamp)
-            if end_timestamp:
-                meter_data = meter_data.filter(timestamp__lte=end_timestamp)
+    
+    start_timestamp = request.GET.get('start_timestamp')
+    end_timestamp = request.GET.get('end_timestamp')
+        #meter_data = Meter_data.objects.all()
 
-            # Rest of your view logic goes here
+    if start_timestamp:
+        meter_data = meter_data.filter(timestamp__gte=start_timestamp)
+    if end_timestamp:
+        meter_data = meter_data.filter(timestamp__lte=end_timestamp)
+
+        # Rest of your view logic goes here
 
 
-    else:
-        form = DateRangeForm()
+
     
     # Prepare data for the line chart
 
