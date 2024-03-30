@@ -101,8 +101,8 @@ def chart_view(request):
 
     form= PlotForm(request.GET or None)
     if form.is_valid():
-        start_date= form.cleaned_data('start_date')
-        end_date = form.cleaned_data('end_date')
+        start_date= form.cleaned_data['start_date']
+        end_date = form.cleaned_data['end_date']
         if start_date:
             meter_data = meter_data.filter(date__gte=start_date)
         if end_date:
