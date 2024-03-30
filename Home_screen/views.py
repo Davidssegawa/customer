@@ -16,7 +16,7 @@ from .serializers import MeterDataSerializer
 import json
 from django.utils import timezone
 import plotly.express as px
-from .forms import PlotForm
+from .forms import DateRangeForm
 def index(request):
     return render(request,'authentication/index.html')
 
@@ -99,7 +99,7 @@ def chart_view(request):
     # Retrieve all Meter_data objects from the database
     meter_data = Meter_data.objects.all()
 
-    form= PlotForm(request.GET or None)
+    form= DateRangeForm(request.GET or None)
     start_timestamp = form.cleaned_data['start_timestamp']
     end_timestamp = form.cleaned_data['end_timestamp']
     if start_timestamp:
