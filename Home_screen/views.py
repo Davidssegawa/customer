@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from .serializers import MeterDataSerializer
 import json
 from django.utils import timezone
-
+import plotly.express as px
 def index(request):
     return render(request,'authentication/index.html')
 
@@ -92,3 +92,22 @@ class MeterDataList(APIView):
         meter_data = Meter_data.objects.all()
         serializer = MeterDataSerializer(meter_data, many=True)
         return Response(serializer.data)
+    
+    
+def chart_view(request):
+    # Retrieve all Meter_data objects from the database
+    meter_data = Meter_data.objects.all()
+        
+    # Prepare data for the line chart
+
+    fig = px.line(
+        x=[data.timestamp for data in meter_data],
+        y=[data.text for data in meter_data],
+        title= "Real-time water usage",
+        labels = {'x': 'Timestamp','y':'Water measurements'}
+
+    )
+        
+    chart_html = fig.to_html(full_html=False)
+    context = {'chart_html': chart_html}
+    return render(request, 'sections/Statistics.html',context )
