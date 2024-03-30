@@ -96,35 +96,28 @@ class MeterDataList(APIView):
     
 
 def chart_view(request):
+    form = DateRangeForm(request.GET or None)  # Initialize the form instance
+    
     # Retrieve all Meter_data objects from the database
     meter_data = Meter_data.objects.all()
 
+    if form.is_valid():
+        start_timestamp = form.cleaned_data.get('start_timestamp')
+        end_timestamp = form.cleaned_data.get('end_timestamp')
 
-    
-    start_timestamp = request.GET.get('start_timestamp')
-    end_timestamp = request.GET.get('end_timestamp')
-        #meter_data = Meter_data.objects.all()
+        if start_timestamp:
+            meter_data = meter_data.filter(timestamp__gte=start_timestamp)
+        if end_timestamp:
+            meter_data = meter_data.filter(timestamp__lte=end_timestamp)
 
-    if start_timestamp:
-        meter_data = meter_data.filter(timestamp__gte=start_timestamp)
-    if end_timestamp:
-        meter_data = meter_data.filter(timestamp__lte=end_timestamp)
-
-        # Rest of your view logic goes here
-
-
-
-    
     # Prepare data for the line chart
-
     fig = px.line(
         x=[data.timestamp for data in meter_data],
         y=[data.text for data in meter_data],
-        title= "Real-time water usage",
-        labels = {'x': 'Timestamp','y':'Water measurements'}
-
+        title="Real-time water usage",
+        labels={'x': 'Timestamp', 'y': 'Water measurements'}
     )
-        
+
     chart_html = fig.to_html(full_html=False)
-    context = {'chart_html': chart_html,"form":form}
-    return render(request, 'sections/Statistics.html',context )
+    context = {'chart_html': chart_html, "form": form}
+    return render(request, 'sections/Statistics.html', context)
