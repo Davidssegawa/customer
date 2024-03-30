@@ -16,6 +16,7 @@ from .serializers import MeterDataSerializer
 import json
 from django.utils import timezone
 import plotly.express as px
+from .forms import PlotForm
 def index(request):
     return render(request,'authentication/index.html')
 
@@ -93,7 +94,7 @@ class MeterDataList(APIView):
         serializer = MeterDataSerializer(meter_data, many=True)
         return Response(serializer.data)
     
-    
+
 def chart_view(request):
     # Retrieve all Meter_data objects from the database
     meter_data = Meter_data.objects.all()
@@ -109,5 +110,5 @@ def chart_view(request):
     )
         
     chart_html = fig.to_html(full_html=False)
-    context = {'chart_html': chart_html}
+    context = {'chart_html': chart_html,"form":PlotForm}
     return render(request, 'sections/Statistics.html',context )
