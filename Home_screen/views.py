@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.edit import CreateView
+import pandas as pd
 from .models import Meter_data 
 from django.http import JsonResponse
 from rest_framework.views import APIView
@@ -109,19 +110,24 @@ def chart_view(request):
             meter_data = meter_data.filter(timestamp__gte=start_timestamp)
         if end_timestamp:
             meter_data = meter_data.filter(timestamp__lte=end_timestamp)
-    x_values=[]
-    y_values=[]
+    data = {
+        'Timestamp': [data.timestamp for data in meter_data],
+        'Water Measurements': [data.text for data in meter_data]  # Assuming 'value' is the field containing water measurements
+    }
 
-    for data in meter_data:
-        x_values.append(data.timestamp)
-        y_values.append(data.text)
+    # Create a DataFrame from the data dictionary
+    df = pd.DataFrame(data)
+
+    # Create the line chart
+    fig = px.line(df, x='Timestamp', y='Water Measurements', title="Real-time water usage")
     # Prepare data for the line chart
-    fig = px.line(
-        x=x_values,
-        y=y_values,
-        title="Real-time water usage",
-        labels={'x': 'Timestamp', 'y': 'Water measurements'}
-    )
+    # fig = px.line(
+    #     df,
+    #     x='Timestamp',
+    #     y='Water Measurements',
+    #     title="Real-time water usage",
+    #     labels={'x': 'Timestamp', 'y': 'Water measurements'}
+    # )
 
     chart_html = fig.to_html(full_html=False)
     context = {'chart_html': chart_html, "form": form}
