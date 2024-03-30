@@ -98,13 +98,17 @@ class MeterDataList(APIView):
 def chart_view(request):
     # Retrieve all Meter_data objects from the database
     meter_data = Meter_data.objects.all()
-    start= request.GET.get('start')
-    end = request.GET.get('end')
 
-    if start:
-        meter_data = meter_data.dates.filter(date__gte=start)
-    if end:
-        meter_data = meter_data.dates.filter(date__lte=end)
+    form= PlotForm(request.GET or None)
+    if form.is_valid():
+        start_date= form.cleaned_data('start_date')
+        end_date = form.cleaned_data('end_date')
+        if start_date:
+            meter_data = meter_data.filter(date__gte=start_date)
+        if end_date:
+            meter_data = meter_data.filter(date__lte="end_date")
+
+    
     # Prepare data for the line chart
 
     fig = px.line(
@@ -116,5 +120,5 @@ def chart_view(request):
     )
         
     chart_html = fig.to_html(full_html=False)
-    context = {'chart_html': chart_html,"form":PlotForm()}
+    context = {'chart_html': chart_html,"form":form}
     return render(request, 'sections/Statistics.html',context )
