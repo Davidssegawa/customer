@@ -107,9 +107,9 @@ def chart_view(request):
             meter_data = Meter_data.objects.all()
 
             if start_date:
-                meter_data = meter_data.filter(date__gte=start_date)
+                meter_data = meter_data.filter(timestamp__gte=start_date)
             if end_date:
-                meter_data = meter_data.filter(date__lte=end_date)
+                meter_data = meter_data.filter(timestamp__lte=end_date)
 
             # Rest of your view logic goes here
 
