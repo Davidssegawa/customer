@@ -100,13 +100,12 @@ def chart_view(request):
     meter_data = Meter_data.objects.all()
 
     form= PlotForm(request.GET or None)
-    if form.is_valid():
-        start_date= form.cleaned_data['start_date']
-        end_date = form.cleaned_data['end_date']
-        if start_date:
-            meter_data = meter_data.filter(date__gte=start_date)
-        if end_date:
-            meter_data = meter_data.filter(date__lte="end_date")
+    start_timestamp = form.cleaned_data['start_timestamp']
+    end_timestamp = form.cleaned_data['end_timestamp']
+    if start_timestamp:
+        meter_data = meter_data.filter(timestamp__gte=start_timestamp)
+    if end_timestamp:
+        meter_data = meter_data.filter(timestamp__lte=end_timestamp)
 
     
     # Prepare data for the line chart

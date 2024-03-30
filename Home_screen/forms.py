@@ -1,6 +1,6 @@
 from django import forms
+from django.forms import DateTimeInput
 
-class PlotForm(forms.Form):
-    start_date = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
-    end_date = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
-                            
+class DateRangeForm(forms.Form):
+    start_timestamp = forms.DateTimeField(label='Start Timestamp', widget=DateTimeInput(attrs={'type': 'datetime-local'}))
+    end_timestamp = forms.DateTimeField(label='End Timestamp', widget=DateTimeInput(attrs={'type': 'datetime-local'}))
