@@ -110,5 +110,5 @@ def chart_view(request):
     )
         
     chart_html = fig.to_html(full_html=False)
-    context = {'chart_html': chart_html,"form":PlotForm}
+    context = {'chart_html': chart_html,"form":PlotForm()}
     return render(request, 'sections/Statistics.html',context )
