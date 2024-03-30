@@ -98,7 +98,13 @@ class MeterDataList(APIView):
 def chart_view(request):
     # Retrieve all Meter_data objects from the database
     meter_data = Meter_data.objects.all()
-        
+    start= request.GET.get('start')
+    end = request.GET.get('end')
+
+    if start:
+        meter_data = meter_data.filter(date__gte=start)
+    if end:
+        meter_data = meter_data.filter(date__lte=end)
     # Prepare data for the line chart
 
     fig = px.line(
