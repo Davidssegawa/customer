@@ -1,20 +1,14 @@
 <!DOCTYPE html>
-<html>
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Line Chart</title>
+    <!-- Include Plotly library (optional if already included in the chart HTML snippet) -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
 <body>
-
-<div id="myPlot" style="width:100%;max-width:700px"></div>
-
-<script>
-const xArray = ["January", "February", "March", "April", "May"];
-const yArray = [55, 49, 44, 24, 15];
-
-const layout = {title:"Test chart"};
-
-const data = [{labels:xArray, values:yArray, hole:.4, type:"pie"}];
-
-Plotly.newPlot("myPlot", data, layout);
-</script>
-
+    <!-- Render the chart HTML snippet passed from the view -->
+    <div id="plotly_graph" style="height: 600px; width: 600px;">{{ chart_html|safe }}</div>
 </body>
 </html>
