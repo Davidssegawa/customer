@@ -18,6 +18,11 @@ import json
 from django.utils import timezone
 import plotly.express as px
 from .forms import DateRangeForm
+from .models import WaterUnit
+from .forms import PurchaseForm
+import requests
+
+
 def index(request):
     return render(request,'authentication/index.html')
 
@@ -132,3 +137,27 @@ def chart_view(request):
     chart_html = fig.to_html(full_html=False)
     context = {'chart_html': chart_html, "form": form}
     return render(request, 'sections/Statistics.html', context)
+
+
+def buy_water(request):
+    if request.method == 'POST':
+        form = PurchaseForm(request.POST)
+        if form.is_valid():
+            unit_id = form.cleaned_data['unit'].id
+            unit_price = form.cleaned_data['unit'].price
+            phone_number = form.cleaned_data['phone_number']
+            # Process payment with MOMO API (example using requests library)
+            # Replace 'MOMO_API_URL' with the actual URL of the MOMO API endpoint
+            response = requests.post('MOMO_API_URL', data={'unit_id': unit_id, 'phone_number': phone_number, 'amount': unit_price})
+            if response.status_code == 200:  # Assuming successful payment
+                return redirect('purchase_confirmation', unit_id=unit_id)
+            else:
+                # Handle payment failure
+                pass
+    else:
+        form = PurchaseForm()
+    return render(request, 'sections/Payment.html', {'form': form})
+
+def purchase_confirmation(request, unit_id):
+    unit = WaterUnit.objects.get(id=unit_id)
+    return render(request, 'sections/purchase_confirmation.html', {'unit': unit})

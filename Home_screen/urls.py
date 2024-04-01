@@ -11,7 +11,9 @@ urlpatterns =[
     path('signout/',views.signout,name='signout'),
 
     path('home/statistics/',views.chart_view,name='statistics'),
-    path('home/payment',views.payment, name='payment'),
+    #path('home/payment',views.payment, name='payment'),
     path('webhook/ttn/', views.ttn_webhook),
     path('api/meter-data/',MeterDataList.as_view(), name='meter-data-list'),
+    path("home/payment/",views.buy_water, name='payment'),
+    path('water/purchase_confirmation/<int:unit_id>/', views.purchase_confirmation, name='purchase_confirmation'),
 ]
