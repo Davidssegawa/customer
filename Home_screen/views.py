@@ -73,26 +73,26 @@ def statistics(request):
 def payment(request):
     return render(request,'sections/Payment.html')
 
-@csrf_exempt
-def ttn_webhook(request):
-    if request.method == 'POST':
-        data = json.loads(request.body.decode('utf-8'))
-        print(data)
+# @csrf_exempt
+# def ttn_webhook(request):
+#     if request.method == 'POST':
+#         data = json.loads(request.body.decode('utf-8'))
+#         print(data)
 
-        timestamp = timezone.now()
+#         timestamp = timezone.now()
 
-        text = data.get("uplink_message",{}).get('decoded_payload',{}).get('text')
+#         text = data.get("uplink_message",{}).get('decoded_payload',{}).get('text')
 
-        print("Text:",text)
-        print("Timestamp:",timestamp)
+#         print("Text:",text)
+#         print("Timestamp:",timestamp)
 
-        meter_data = Meter_data(timestamp=timestamp,text=text)
-        meter_data.save()
+#         meter_data = Meter_data(timestamp=timestamp,text=text)
+#         meter_data.save()
 
 
-        return JsonResponse({'message': 'Data received and saved.'})
-    else:
-        return JsonResponse({'error':'Invalid request method.'}, status=405)
+#         return JsonResponse({'message': 'Data received and saved.'})
+#     else:
+#         return JsonResponse({'error':'Invalid request method.'}, status=405)
     
 # class MeterDataList(APIView):
 #     def get(self):
@@ -184,12 +184,15 @@ def chart_view(request):
             meter_data = [data for data in meter_data if data['timestamp'] >= start_timestamp]
         if end_timestamp:
             meter_data = [data for data in meter_data if data['timestamp'] <= end_timestamp]
-
+    data = {
+    'Timestamp': [data.timestamp for data in meter_data],
+    'Water Measurements': [data.text for data in meter_data]  # Assuming 'value' is the field containing water measurements
+    }
     # Create a DataFrame from the retrieved meter data
-    df = pd.DataFrame(meter_data)
+    df = pd.DataFrame(data)
 
     # Create the line chart
-    fig = px.line(df, x='Timestamp', y='Water Measurements', title="Real-time water usage")
+    fig = px.line(df, x='timestamp', y='Water Measurements', title="Real-time water usage")
 
     # Convert the plot to HTML
     chart_html = fig.to_html(full_html=False)
