@@ -9,11 +9,11 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.edit import CreateView
 import pandas as pd
-from .models import Meter_data 
+#from .models import Meter_data 
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import MeterDataSerializer
+#from .serializers import MeterDataSerializer
 import json
 from django.utils import timezone
 import plotly.express as px
