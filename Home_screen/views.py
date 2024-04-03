@@ -181,12 +181,12 @@ def chart_view(request):
 
         # Filter data based on date range if provided
         if start_timestamp:
-            meter_data = [data for data in meter_data if data['timestamp'] >= start_timestamp]
+            meter_data = meter_data.filter(timestamp__gte=start_timestamp)
         if end_timestamp:
-            meter_data = [data for data in meter_data if data['timestamp'] <= end_timestamp]
+            meter_data = meter_data.filter(timestamp__lte=end_timestamp)
     data = {
-    'Timestamp': [data.timestamp for data in meter_data],
-    'Water Measurements': [data.text for data in meter_data]  # Assuming 'value' is the field containing water measurements
+        'Timestamp': [data.timestamp for data in meter_data],
+        'Water Measurements': [data.text for data in meter_data]  # Assuming 'value' is the field containing water measurements
     }
     # Create a DataFrame from the retrieved meter data
     df = pd.DataFrame(data)
