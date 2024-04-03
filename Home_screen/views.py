@@ -94,49 +94,49 @@ def ttn_webhook(request):
     else:
         return JsonResponse({'error':'Invalid request method.'}, status=405)
     
-class MeterDataList(APIView):
-    def get(self):
-        meter_data = Meter_data.objects.all()
-        serializer = MeterDataSerializer(meter_data, many=True)
-        return Response(serializer.data)
+# class MeterDataList(APIView):
+#     def get(self):
+#         meter_data = Meter_data.objects.all()
+#         serializer = MeterDataSerializer(meter_data, many=True)
+#         return Response(serializer.data)
     
 
-def chart_view(request):
-    form = DateRangeForm(request.GET or None)  # Initialize the form instance
+# def chart_view(request):
+#     form = DateRangeForm(request.GET or None)  # Initialize the form instance
     
-    # Retrieve all Meter_data objects from the database
-    meter_data = Meter_data.objects.all()
+#     # Retrieve all Meter_data objects from the database
+#     meter_data = Meter_data.objects.all()
 
-    if form.is_valid():
-        start_timestamp = form.cleaned_data.get('start_timestamp')
-        end_timestamp = form.cleaned_data.get('end_timestamp')
+#     if form.is_valid():
+#         start_timestamp = form.cleaned_data.get('start_timestamp')
+#         end_timestamp = form.cleaned_data.get('end_timestamp')
 
-        if start_timestamp:
-            meter_data = meter_data.filter(timestamp__gte=start_timestamp)
-        if end_timestamp:
-            meter_data = meter_data.filter(timestamp__lte=end_timestamp)
-    data = {
-        'Timestamp': [data.timestamp for data in meter_data],
-        'Water Measurements': [data.text for data in meter_data]  # Assuming 'value' is the field containing water measurements
-    }
+#         if start_timestamp:
+#             meter_data = meter_data.filter(timestamp__gte=start_timestamp)
+#         if end_timestamp:
+#             meter_data = meter_data.filter(timestamp__lte=end_timestamp)
+#     data = {
+#         'Timestamp': [data.timestamp for data in meter_data],
+#         'Water Measurements': [data.text for data in meter_data]  # Assuming 'value' is the field containing water measurements
+#     }
 
-    # Create a DataFrame from the data dictionary
-    df = pd.DataFrame(data)
+#     # Create a DataFrame from the data dictionary
+#     df = pd.DataFrame(data)
 
-    # Create the line chart
-    fig = px.line(df, x='Timestamp', y='Water Measurements', title="Real-time water usage")
-    # Prepare data for the line chart
-    # fig = px.line(
-    #     df,
-    #     x='Timestamp',
-    #     y='Water Measurements',
-    #     title="Real-time water usage",
-    #     labels={'x': 'Timestamp', 'y': 'Water measurements'}
-    # )
+#     # Create the line chart
+#     fig = px.line(df, x='Timestamp', y='Water Measurements', title="Real-time water usage")
+#     # Prepare data for the line chart
+#     # fig = px.line(
+#     #     df,
+#     #     x='Timestamp',
+#     #     y='Water Measurements',
+#     #     title="Real-time water usage",
+#     #     labels={'x': 'Timestamp', 'y': 'Water measurements'}
+#     # )
 
-    chart_html = fig.to_html(full_html=False)
-    context = {'chart_html': chart_html, "form": form}
-    return render(request, 'sections/Statistics.html', context)
+#     chart_html = fig.to_html(full_html=False)
+#     context = {'chart_html': chart_html, "form": form}
+#     return render(request, 'sections/Statistics.html', context)
 
 
 def buy_water(request):
@@ -161,3 +161,38 @@ def buy_water(request):
 def purchase_confirmation(request, unit_id):
     unit = WaterUnit.objects.get(id=unit_id)
     return render(request, 'sections/purchase_confirmation.html', {'unit': unit})
+
+
+#fetching meter data from the postgreSQL and then plotting the chart
+def chart_view(request):
+    form = DateRangeForm(request.GET or None)
+
+    # Make API call to the second project to fetch meter data
+    api_url = 'api/meter-data/'  # Replace with actual API URL
+    response = requests.get(api_url)
+    if response.status_code == 200:
+        meter_data = response.json()
+    else:
+        meter_data = []  # Empty list if API call fails
+
+    if form.is_valid():
+        start_timestamp = form.cleaned_data.get('start_timestamp')
+        end_timestamp = form.cleaned_data.get('end_timestamp')
+
+        # Filter data based on date range if provided
+        if start_timestamp:
+            meter_data = [data for data in meter_data if data['timestamp'] >= start_timestamp]
+        if end_timestamp:
+            meter_data = [data for data in meter_data if data['timestamp'] <= end_timestamp]
+
+    # Create a DataFrame from the retrieved meter data
+    df = pd.DataFrame(meter_data)
+
+    # Create the line chart
+    fig = px.line(df, x='Timestamp', y='Water Measurements', title="Real-time water usage")
+
+    # Convert the plot to HTML
+    chart_html = fig.to_html(full_html=False)
+    
+    context = {'chart_html': chart_html, "form": form}
+    return render(request, 'sections/Statistics.html', context)
