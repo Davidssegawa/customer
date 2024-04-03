@@ -168,7 +168,7 @@ def chart_view(request):
     form = DateRangeForm(request.GET or None)
 
     # Make API call to the second project to fetch meter data
-    api_url = 'https://api/meter-data/'  # Replace with actual API URL
+    api_url = 'https://fyp-4.onrender.com/api/meter-data/'  # Replace with actual API URL
     response = requests.get(api_url)
     if response.status_code == 200:
         meter_data = response.json()
