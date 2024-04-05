@@ -18,7 +18,7 @@ import json
 from django.utils import timezone
 import plotly.express as px
 from .forms import DateRangeForm
-from .models import WaterUnit
+#from .models import WaterUnit
 from .forms import PurchaseForm
 import requests
 
@@ -139,28 +139,42 @@ def payment(request):
 #     return render(request, 'sections/Statistics.html', context)
 
 
+import requests
+
 def buy_water(request):
     if request.method == 'POST':
         form = PurchaseForm(request.POST)
         if form.is_valid():
-            unit_id = form.cleaned_data['unit'].id
-            unit_price = form.cleaned_data['unit'].price
+            unit_id = form.cleaned_data['unit_id']
             phone_number = form.cleaned_data['phone_number']
-            # Process payment with MOMO API (example using requests library)
-            # Replace 'MOMO_API_URL' with the actual URL of the MOMO API endpoint
-            response = requests.post('MOMO_API_URL', data={'unit_id': unit_id, 'phone_number': phone_number, 'amount': unit_price})
-            if response.status_code == 200:  # Assuming successful payment
-                return redirect('purchase_confirmation', unit_id=unit_id)
+            
+            # Make API call to fetch WaterUnit data
+            api_url = 'https://fyp-4.onrender.com/api/waterunits/'.format(unit_id)  # Adjust the API URL
+            response = requests.get(api_url)
+            if response.status_code == 200:
+                unit_data = response.json()
+                unit_price = unit_data.get('price')  # Assuming the API response contains price information
             else:
-                # Handle payment failure
-                pass
+                # Handle API error
+                unit_price = None  # Set unit price to None if API call fails
+            
+            if unit_price is not None:
+                # Process payment with MOMO API (example using requests library)
+                momo_api_url = 'MOMO_API_URL'  # Replace with the actual URL of the MOMO API endpoint
+                momo_response = requests.post(momo_api_url, data={'unit_id': unit_id, 'phone_number': phone_number, 'amount': unit_price})
+                if momo_response.status_code == 200:  # Assuming successful payment
+                    return redirect('purchase_confirmation', unit_id=unit_id)
+                else:
+                    # Handle payment failure
+                    pass
     else:
         form = PurchaseForm()
     return render(request, 'sections/Payment.html', {'form': form})
 
 def purchase_confirmation(request, unit_id):
-    unit = WaterUnit.objects.get(id=unit_id)
-    return render(request, 'sections/purchase_confirmation.html', {'unit': unit})
+    # Here you can directly use the unit_id to display confirmation
+    return render(request, 'sections/purchase_confirmation.html', {'unit_id': unit_id})
+
 
 
 #fetching meter data from the postgreSQL and then plotting the chart
