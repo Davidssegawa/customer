@@ -206,7 +206,7 @@ def chart_view(request):
     df = pd.DataFrame(data)
 
     # Create the line chart
-    fig = px.line(df, x='timestamp', y='Water Measurements', title="Real-time water usage")
+    fig = px.line(df, x='Timestamp', y='Water Measurements', title="Real-time water usage")
 
     # Convert the plot to HTML
     chart_html = fig.to_html(full_html=False)
