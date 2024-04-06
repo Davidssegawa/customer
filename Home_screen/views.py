@@ -21,7 +21,7 @@ from .forms import DateRangeForm
 #from .models import WaterUnit
 #from .forms import PurchaseForm
 import requests
-
+from django import forms
 import random
 import string
 import requests
@@ -162,30 +162,34 @@ def chart_view(request):
 
 
 def prepayment(request):
-    # Fetch prepayment options from the first project's API
-    options_response = requests.get('https://fyp-4.onrender.com/api/prepayment-options/')
-    if options_response.status_code == 200:
-        options_data = options_response.json()
-        options = [(option['id'], F"{option['name']},(UGx{option['price']}") for option in options_data]
-        form = PrepaymentOptionForm(choices=options)
-        if request.method == 'POST':
-            form = PrepaymentOptionForm(request.POST, choices=options)
-            if form.is_valid():
-                selected_option_id = form.cleaned_data['options']
-                # Generate confirmation code
-                confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
-                # Send transaction details to the first project's API
-                transaction_data = {'options': selected_option_id, 'confirmation_code': confirmation_code}
-                transaction_response = requests.post('https://fyp-4.onrender.com/api/transactions/', data=transaction_data)
-                if transaction_response.status_code == 201:
-                    transaction_id = transaction_response.json()['id']
-                    return redirect('sections/purchase_confirmation.html', transaction_id=transaction_id)
+    # Fetch prepayment options from FYP_server's API
+    response = requests.get('https://fyp-4.onrender.com/api/prepayment-options/')
+    if response.status_code == 200:
+        options_data = response.json()
+        options = [(option['id'], f"{option['name']}, (UGx{option['price']})") for option in options_data]
     else:
+        # If request fails, set options to an empty list
         options = []
+
+    # Define choices for selected_option field
+    #selected_option = forms.ChoiceField(choices=options, widget=forms.RadioSelect)
+
+    if request.method == 'POST':
+        form = PrepaymentOptionForm(request.POST, choices=options)
+        if form.is_valid():
+            selected_option_id = form.cleaned_data['selected_option']
+            # Generate confirmation code
+            confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+            # Send transaction details to FYP_server's API
+            transaction_data = {'selected_option': selected_option_id, 'confirmation_code': confirmation_code}
+            transaction_response = requests.post('https://fyp-4.onrender.com/api/transactions/', data=transaction_data)
+            if transaction_response.status_code == 201:
+                transaction_id = transaction_response.json()['id']
+                return redirect('payment_confirmation', transaction_id=transaction_id)
+    else:
         form = PrepaymentOptionForm()
 
-    return render(request, 'sections/Payment.html', {'form': form, 'options': options})
-
+    return render(request, 'sections/Payment.html', {'form': form})
 
 def payment_confirmation(request, transaction_id):
     # Fetch transaction details from the first project's API

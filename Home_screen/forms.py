@@ -24,7 +24,7 @@ class PrepaymentOptionForm(forms.Form):
     response = requests.get('https://fyp-4.onrender.com/api/prepayment-options/')
     if response.status_code == 200:
         options_data = response.json()
-        options = [(option['id'], option['name']) for option in options_data]
+        options = [(option['id'], f"{option['name']},(UGx{option['price']}") for option in options_data]
     else:
         # If request fails, set options to an empty list
         options = []
