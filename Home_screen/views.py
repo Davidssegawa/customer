@@ -175,7 +175,8 @@ def prepayment(request):
     #selected_option = forms.ChoiceField(choices=options, widget=forms.RadioSelect)
 
     if request.method == 'POST':
-        form = PrepaymentOptionForm(request.POST, choices=options)
+        form = PrepaymentOptionForm(request.POST)
+        form.fields['selected_option'].choices = options
         if form.is_valid():
             selected_option_id = form.cleaned_data['selected_option']
             # Generate confirmation code
@@ -188,6 +189,7 @@ def prepayment(request):
                 return redirect('payment_confirmation', transaction_id=transaction_id)
     else:
         form = PrepaymentOptionForm()
+        form.fields['selectd_option'].choices =options
 
     return render(request, 'sections/Payment.html', {'form': form})
 
