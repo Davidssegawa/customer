@@ -21,7 +21,7 @@ class DateRangeForm(forms.Form):
 
 class PrepaymentOptionForm(forms.Form):
     # Fetch prepayment options from FYP_server's API
-    response = requests.get('http://fyp-4.onrender.com/api/prepayment-options/')
+    response = requests.get('https://fyp-4.onrender.com/api/prepayment-options/')
     if response.status_code == 200:
         options_data = response.json()
         options = [(option['id'], option['name']) for option in options_data]

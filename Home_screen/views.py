@@ -163,7 +163,7 @@ def chart_view(request):
 
 def prepayment(request):
     # Fetch prepayment options from the first project's API
-    options_response = requests.get('http://fyp-4.onrender.com/api/prepayment-options/')
+    options_response = requests.get('https://fyp-4.onrender.com/api/prepayment-options/')
     if options_response.status_code == 200:
         options_data = options_response.json()
         options = [(option['id'], option['name']) for option in options_data]
@@ -176,7 +176,7 @@ def prepayment(request):
                 confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
                 # Send transaction details to the first project's API
                 transaction_data = {'selected_option': selected_option_id, 'confirmation_code': confirmation_code}
-                transaction_response = requests.post('http://fyp-4.onrender.com/api/transactions/', data=transaction_data)
+                transaction_response = requests.post('https://fyp-4.onrender.com/api/transactions/', data=transaction_data)
                 if transaction_response.status_code == 201:
                     transaction_id = transaction_response.json()['id']
                     return redirect('sections/purchase_confirmation.html', transaction_id=transaction_id)
@@ -189,7 +189,7 @@ def prepayment(request):
 
 def payment_confirmation(request, transaction_id):
     # Fetch transaction details from the first project's API
-    transaction_response = requests.get(f'http://fyp-4.onrender.com/api/transactions/{transaction_id}/')
+    transaction_response = requests.get(f'https://fyp-4.onrender.com/api/transactions/{transaction_id}/')
     if transaction_response.status_code == 200:
         transaction_data = transaction_response.json()
         transaction = {
