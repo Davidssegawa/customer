@@ -16,5 +16,5 @@ urlpatterns =[
     #path('api/meter-data/',MeterDataList.as_view(), name='meter-data-list'),
     #path("home/payment/",views.buy_water, name='payment'),
     path("home/payment/",views.prepayment, name="prepayment"),
-    path('water/payment_confirmation/<int:unit_id>/', views.payment_confirmation, name='payment_confirmation'),
+    path('water/payment_confirmation/<int:transaction_id>/', views.payment_confirmation, name='payment_confirmation'),
 ]
