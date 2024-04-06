@@ -166,16 +166,16 @@ def prepayment(request):
     options_response = requests.get('https://fyp-4.onrender.com/api/prepayment-options/')
     if options_response.status_code == 200:
         options_data = options_response.json()
-        options = [(option['id'], option['name']) for option in options_data]
-        form = PrepaymentOptionForm(initial={'selected_option': options[0][0] if options else None})
+        options = [(option['id'], F"{option['name']},(UGx{option['price']}") for option in options_data]
+        form = PrepaymentOptionForm(choices=options)
         if request.method == 'POST':
-            form = PrepaymentOptionForm(request.POST, initial={'selected_option': options[0][0] if options else None})
+            form = PrepaymentOptionForm(request.POST, choices=options)
             if form.is_valid():
-                selected_option_id = form.cleaned_data['selected_option']
+                selected_option_id = form.cleaned_data['options']
                 # Generate confirmation code
                 confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
                 # Send transaction details to the first project's API
-                transaction_data = {'selected_option': selected_option_id, 'confirmation_code': confirmation_code}
+                transaction_data = {'options': selected_option_id, 'confirmation_code': confirmation_code}
                 transaction_response = requests.post('https://fyp-4.onrender.com/api/transactions/', data=transaction_data)
                 if transaction_response.status_code == 201:
                     transaction_id = transaction_response.json()['id']
