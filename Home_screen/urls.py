@@ -14,6 +14,7 @@ urlpatterns =[
     #path('home/payment',views.payment, name='payment'),
     #path('webhook/ttn/', views.ttn_webhook),
     #path('api/meter-data/',MeterDataList.as_view(), name='meter-data-list'),
-    path("home/payment/",views.buy_water, name='payment'),
-    path('water/purchase_confirmation/<int:unit_id>/', views.purchase_confirmation, name='purchase_confirmation'),
+    #path("home/payment/",views.buy_water, name='payment'),
+    path("home/payment",views.prepayment, name="prepayment"),
+    path('water/payment_confirmation/<int:unit_id>/', views.payment_confirmation, name='payment_confirmation'),
 ]

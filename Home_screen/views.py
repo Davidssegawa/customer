@@ -19,8 +19,16 @@ from django.utils import timezone
 import plotly.express as px
 from .forms import DateRangeForm
 #from .models import WaterUnit
-from .forms import PurchaseForm
+#from .forms import PurchaseForm
 import requests
+
+import random
+import string
+import requests
+from django.shortcuts import render, redirect
+from .forms import PrepaymentOptionForm
+
+
 
 
 def index(request):
@@ -73,107 +81,40 @@ def statistics(request):
 def payment(request):
     return render(request,'sections/Payment.html')
 
-# @csrf_exempt
-# def ttn_webhook(request):
+
+# def buy_water(request):
 #     if request.method == 'POST':
-#         data = json.loads(request.body.decode('utf-8'))
-#         print(data)
-
-#         timestamp = timezone.now()
-
-#         text = data.get("uplink_message",{}).get('decoded_payload',{}).get('text')
-
-#         print("Text:",text)
-#         print("Timestamp:",timestamp)
-
-#         meter_data = Meter_data(timestamp=timestamp,text=text)
-#         meter_data.save()
-
-
-#         return JsonResponse({'message': 'Data received and saved.'})
+#         form = PurchaseForm(request.POST)
+#         if form.is_valid():
+#             unit_id = form.cleaned_data['unit_id']
+#             phone_number = form.cleaned_data['phone_number']
+            
+#             # Make API call to fetch WaterUnit data
+#             api_url = 'https://fyp-4.onrender.com/api/waterunits/'.format(unit_id)  # Adjust the API URL
+#             response = requests.get(api_url)
+#             if response.status_code == 200:
+#                 unit_data = response.json()
+#                 unit_price = unit_data.get('price')  # Assuming the API response contains price information
+#             else:
+#                 # Handle API error
+#                 unit_price = None  # Set unit price to None if API call fails
+            
+#             if unit_price is not None:
+#                 # Process payment with MOMO API (example using requests library)
+#                 momo_api_url = 'MOMO_API_URL'  # Replace with the actual URL of the MOMO API endpoint
+#                 momo_response = requests.post(momo_api_url, data={'unit_id': unit_id, 'phone_number': phone_number, 'amount': unit_price})
+#                 if momo_response.status_code == 200:  # Assuming successful payment
+#                     return redirect('purchase_confirmation', unit_id=unit_id)
+#                 else:
+#                     # Handle payment failure
+#                     pass
 #     else:
-#         return JsonResponse({'error':'Invalid request method.'}, status=405)
-    
-# class MeterDataList(APIView):
-#     def get(self):
-#         meter_data = Meter_data.objects.all()
-#         serializer = MeterDataSerializer(meter_data, many=True)
-#         return Response(serializer.data)
-    
+#         form = PurchaseForm()
+#     return render(request, 'sections/Payment.html', {'form': form})
 
-# def chart_view(request):
-#     form = DateRangeForm(request.GET or None)  # Initialize the form instance
-    
-#     # Retrieve all Meter_data objects from the database
-#     meter_data = Meter_data.objects.all()
-
-#     if form.is_valid():
-#         start_timestamp = form.cleaned_data.get('start_timestamp')
-#         end_timestamp = form.cleaned_data.get('end_timestamp')
-
-#         if start_timestamp:
-#             meter_data = meter_data.filter(timestamp__gte=start_timestamp)
-#         if end_timestamp:
-#             meter_data = meter_data.filter(timestamp__lte=end_timestamp)
-#     data = {
-#         'Timestamp': [data.timestamp for data in meter_data],
-#         'Water Measurements': [data.text for data in meter_data]  # Assuming 'value' is the field containing water measurements
-#     }
-
-#     # Create a DataFrame from the data dictionary
-#     df = pd.DataFrame(data)
-
-#     # Create the line chart
-#     fig = px.line(df, x='Timestamp', y='Water Measurements', title="Real-time water usage")
-#     # Prepare data for the line chart
-#     # fig = px.line(
-#     #     df,
-#     #     x='Timestamp',
-#     #     y='Water Measurements',
-#     #     title="Real-time water usage",
-#     #     labels={'x': 'Timestamp', 'y': 'Water measurements'}
-#     # )
-
-#     chart_html = fig.to_html(full_html=False)
-#     context = {'chart_html': chart_html, "form": form}
-#     return render(request, 'sections/Statistics.html', context)
-
-
-import requests
-
-def buy_water(request):
-    if request.method == 'POST':
-        form = PurchaseForm(request.POST)
-        if form.is_valid():
-            unit_id = form.cleaned_data['unit_id']
-            phone_number = form.cleaned_data['phone_number']
-            
-            # Make API call to fetch WaterUnit data
-            api_url = 'https://fyp-4.onrender.com/api/waterunits/'.format(unit_id)  # Adjust the API URL
-            response = requests.get(api_url)
-            if response.status_code == 200:
-                unit_data = response.json()
-                unit_price = unit_data.get('price')  # Assuming the API response contains price information
-            else:
-                # Handle API error
-                unit_price = None  # Set unit price to None if API call fails
-            
-            if unit_price is not None:
-                # Process payment with MOMO API (example using requests library)
-                momo_api_url = 'MOMO_API_URL'  # Replace with the actual URL of the MOMO API endpoint
-                momo_response = requests.post(momo_api_url, data={'unit_id': unit_id, 'phone_number': phone_number, 'amount': unit_price})
-                if momo_response.status_code == 200:  # Assuming successful payment
-                    return redirect('purchase_confirmation', unit_id=unit_id)
-                else:
-                    # Handle payment failure
-                    pass
-    else:
-        form = PurchaseForm()
-    return render(request, 'sections/Payment.html', {'form': form})
-
-def purchase_confirmation(request, unit_id):
-    # Here you can directly use the unit_id to display confirmation
-    return render(request, 'sections/purchase_confirmation.html', {'unit_id': unit_id})
+# def purchase_confirmation(request, unit_id):
+#     # Here you can directly use the unit_id to display confirmation
+#     return render(request, 'sections/purchase_confirmation.html', {'unit_id': unit_id})
 
 
 
@@ -213,3 +154,49 @@ def chart_view(request):
     
     context = {'chart_html': chart_html, "form": form}
     return render(request, 'sections/Statistics.html', context)
+
+
+
+
+
+
+
+def prepayment(request):
+    # Fetch prepayment options from the first project's API
+    options_response = requests.get('http://fyp-4.onrender.com/api/prepayment-options/')
+    if options_response.status_code == 200:
+        options_data = options_response.json()
+        options = [(option['id'], option['name']) for option in options_data]
+        form = PrepaymentOptionForm(initial={'selected_option': options[0][0] if options else None})
+        if request.method == 'POST':
+            form = PrepaymentOptionForm(request.POST, initial={'selected_option': options[0][0] if options else None})
+            if form.is_valid():
+                selected_option_id = form.cleaned_data['selected_option']
+                # Generate confirmation code
+                confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+                # Send transaction details to the first project's API
+                transaction_data = {'selected_option': selected_option_id, 'confirmation_code': confirmation_code}
+                transaction_response = requests.post('http://fyp-4.onrender.com/api/transactions/', data=transaction_data)
+                if transaction_response.status_code == 201:
+                    transaction_id = transaction_response.json()['id']
+                    return redirect('sections/purchase_confirmation.html', transaction_id=transaction_id)
+    else:
+        options = []
+        form = PrepaymentOptionForm()
+
+    return render(request, 'sections/Payment.html', {'form': form, 'options': options})
+
+
+def payment_confirmation(request, transaction_id):
+    # Fetch transaction details from the first project's API
+    transaction_response = requests.get(f'http://fyp-4.onrender.com/api/transactions/{transaction_id}/')
+    if transaction_response.status_code == 200:
+        transaction_data = transaction_response.json()
+        transaction = {
+            'option_name': transaction_data['option']['name'],
+            'confirmation_code': transaction_data['confirmation_code'],
+        }
+        return render(request, 'sections/purchase_confirmation.html', {'transaction': transaction})
+    else:
+        # Handle error when transaction is not found
+        return render(request, 'sections/purchase_confirmation_error.html')

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
     <title>Payments</title>
@@ -47,4 +47,16 @@
     </div>
 
 </body>
-</html>
+</html> -->
+
+<form method="post">
+    {% csrf_token %}
+    <div style="text-align: center;">
+        <h2>Select Prepayment Option</h2>
+        {% for option_id, option_name in form.selected_option.field.choices %}
+            <input type="radio" id="{{ option_id }}" name="selected_option" value="{{ option_id }}">
+            <label for="{{ option_id }}">{{ option_name }}</label><br>
+        {% endfor %}
+        <button type="submit" style="background-color: blue; color: white; padding: 10px 20px; border: none; border-radius: 5px;">PAY</button>
+    </div>
+</form>

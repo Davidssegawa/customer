@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
     <title>Purchase Confirmation</title>
@@ -7,4 +7,9 @@
     <h1>Thank You for Your Purchase!</h1>
     <p>You have successfully bought {{ unit.name }} for ${{ unit.price }}.</p>
 </body>
-</html>
+</html> -->
+
+
+<p>Thank you for your payment! Your confirmation code is: {{ transaction.confirmation_code }}</p>
+<p>Option chosen: {{ transaction.option.name }}</p>
+<p>Option ID for IoT device: {{ transaction.option.id }}</p>
