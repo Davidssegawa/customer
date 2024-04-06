@@ -189,7 +189,7 @@ def prepayment(request):
                 return redirect('sections/payment_confirmation.html', transaction_id=transaction_id)
     else:
         form = PrepaymentOptionForm()
-        form.fields['selectd_option'].choices =options
+        form.fields['selected_option'].choices =options
 
     return render(request, 'sections/Payment.html', {'form': form})
 
