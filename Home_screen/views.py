@@ -27,7 +27,7 @@ import string
 import requests
 from django.shortcuts import render, redirect
 from .forms import PrepaymentOptionForm
-from pay import PayClass
+from .pay import PayClass
 
 
 
