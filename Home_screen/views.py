@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.edit import CreateView
 import pandas as pd
 #from .models import Meter_data 
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 #from .serializers import MeterDataSerializer
@@ -206,45 +206,57 @@ def chart_view(request):
 #         return render(request, 'sections/purchase_confirmation_error.html')
 
 
-import random
-import string
-
 def prepayment(request):
+    # Fetch prepayment options from FYP_server's API
+    response = requests.get('https://fyp-4.onrender.com/api/prepayment-options/')
+    if response.status_code == 200:
+        options_data = response.json()
+        options = [(option['id'], f"{option['name']}, (UGx{option['price']})") for option in options_data]
+    else:
+        # If request fails, set options to an empty list
+        options = []
+
     if request.method == 'POST':
         form = PrepaymentOptionForm(request.POST)
+        form.fields['selected_option'].choices = options
         if form.is_valid():
-            unit_id = form.cleaned_data['unit_id']
-            phone_number = form.cleaned_data['phone_number']
-            
-            # Make API call to fetch WaterUnit data
-            api_url = 'https://fyp-4.onrender.com/api/prepayment-options/'.format(unit_id)  # Adjust the API URL
-            response = requests.get(api_url)
-            if response.status_code == 200:
-                unit_data = response.json()
-                unit_price = unit_data.get('price')  # Assuming the API response contains price information
-            else:
-                # Handle API error
-                unit_price = None  # Set unit price to None if API call fails
-            
-            if unit_price is not None:
+            selected_option_id = form.cleaned_data['selected_option']
+            phone_number = form.cleaned_data['phone_number']  # Retrieve the phone number from the form
+            # Generate confirmation code
+            confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+            # Send transaction details to FYP_server's API
+            transaction_data = {'selected_option': selected_option_id, 'confirmation_code': confirmation_code}
+            transaction_response = requests.post('https://fyp-4.onrender.com/api/transactions/', data=transaction_data)
+            if transaction_response.status_code == 201:
+                transaction_id = transaction_response.json()['id']
+                #return redirect('payment_confirmation', transaction_id=transaction_id)
+                
                 # Initialize MOMO API class
                 momo_api = PayClass()
                 
                 # Perform MOMO payment
-                momo_response = momo_api.momopay(unit_price, "currency_code", "transaction_reference", phone_number, "payment_description")
+                momo_response = momo_api.momopay('price', "currency_code", "transaction_reference", phone_number, "payment_description")
                 if momo_response["response"] == 200:  # Assuming successful payment
-                    # Generate a unique code for the purchase
-                    unique_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-                    
-                    # Redirect to purchase confirmation page with unit_id and unique_code
-                    return redirect('purchase_confirmation', unit_id=unit_id, unique_code=unique_code)
+                    return HttpResponse(confirmation_code)  # Return the confirmation code as plain text
                 else:
                     # Handle payment failure
                     pass
     else:
         form = PrepaymentOptionForm()
+        form.fields['selected_option'].choices = options
+
     return render(request, 'sections/Payment.html', {'form': form})
 
-def payment_confirmation(request, unit_id, unique_code):
-    # Here you can directly use the unit_id and unique_code to display confirmation
-    return render(request, 'sections/purchase_confirmation.html', {'unit_id': unit_id, 'unique_code': unique_code})
+def payment_confirmation(request, transaction_id):
+    # Fetch transaction details from the first project's API
+    transaction_response = requests.get(f'https://fyp-4.onrender.com/api/transactions/{transaction_id}/')
+    if transaction_response.status_code == 200:
+        transaction_data = transaction_response.json()
+        transaction = {
+            'option_name': transaction_data['option']['name'],
+            'confirmation_code': transaction_data['confirmation_code'],
+        }
+        return render(request, 'sections/purchase_confirmation.html', {'transaction': transaction})
+    else:
+        # Handle error when transaction is not found
+        return render(request, 'sections/purchase_confirmation_error.html')
