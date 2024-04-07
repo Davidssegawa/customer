@@ -1,5 +1,10 @@
 body{
-    background-color: rgb(14, 150, 195);
+    background-color: rgba(30, 186, 247, 0.916);
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    height: 100vh;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 .container{
     width: 300px; /* Adjust the width as needed */
@@ -10,4 +15,15 @@ body{
     margin: 0 auto; /* Center the div horizontally */
     margin-top: 50px; /* Adjust the margin top as needed */
     line-height: 200px; /* Center the content vertically */
+}
+
+button{
+    padding: 4px 10px;
+    border-radius: 8px;
+    background-color: rgba(0, 174, 255, 0.873);
+    font-weight: 600;
+    cursor: pointer;
+}
+button:hover{
+    background-color: rgba(0, 98, 255, 0.873); 
 }
