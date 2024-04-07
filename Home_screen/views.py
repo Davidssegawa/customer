@@ -235,7 +235,7 @@ def prepayment(request):
                 momo_api = PayClass()
                 
                 # Perform MOMO payment
-                momo_response = momo_api.momopay('price', "currency_code", "transaction_reference", phone_number, "payment_description")
+                momo_response = momo_api.momopay(['selected_option'][1], "currency_code", "transaction_reference", phone_number, "payment_description")
                 if momo_response["response"] == 200:  # Assuming successful payment
                     return HttpResponse(confirmation_code)  # Return the confirmation code as plain text
                 else:
