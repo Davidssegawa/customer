@@ -209,7 +209,7 @@ def chart_view(request):
 import random
 import string
 
-def buy_water(request):
+def prepayment(request):
     if request.method == 'POST':
         form = PrepaymentOptionForm(request.POST)
         if form.is_valid():
@@ -245,6 +245,6 @@ def buy_water(request):
         form = PrepaymentOptionForm()
     return render(request, 'sections/Payment.html', {'form': form})
 
-def purchase_confirmation(request, unit_id, unique_code):
+def payment_confirmation(request, unit_id, unique_code):
     # Here you can directly use the unit_id and unique_code to display confirmation
     return render(request, 'sections/purchase_confirmation.html', {'unit_id': unit_id, 'unique_code': unique_code})
