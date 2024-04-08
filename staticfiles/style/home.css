@@ -1,4 +1,5 @@
 body {
+    background-color: rgba(30, 186, 247, 0.916);;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -9,4 +10,7 @@ body {
 .container {
     display: flex;
     justify-content: space-between;
+}
+.item{
+    margin: 0 10px;
 }
