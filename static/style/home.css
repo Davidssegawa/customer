@@ -16,6 +16,9 @@ body {
     margin-top: 200px;
     /* padding: 35px; */
 }
+.container-2{
+    margin-left:50px;
+}
 .item{
     flex: 1;
     background-color: whitesmoke; /* Background color of the box */
