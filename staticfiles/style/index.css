@@ -23,7 +23,9 @@ button{
     background-color: rgba(0, 174, 255, 0.873);
     font-weight: 600;
     cursor: pointer;
+    color:white;
 }
+
 button a{
     text-decoration:none;
 }
