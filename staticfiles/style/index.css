@@ -13,6 +13,7 @@ body{
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center; /* Centers the text inside the container */
+    padding: 20px;
 }
 
 button{
