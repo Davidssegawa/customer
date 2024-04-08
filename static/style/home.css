@@ -24,6 +24,7 @@ body {
     border-radius: 15px; /* Rounded corners */
     width: 200px;
     height: 50px;
+    margin: 20px;
     box-shadow: -30px 30px 10px,rgba(0,0,0.2);
     margin-right: 10px;
     align-items:center;
