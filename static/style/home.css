@@ -21,7 +21,7 @@ body {
     flex: 1;
     background-color: whitesmoke; /* Background color of the box */
     padding: 10px; /* Padding inside the box */
-    border-radius: 5px; /* Rounded corners */
+    border-radius: 15px; /* Rounded corners */
     width: 200px;
     height: 50px;
     box-shadow: -30px 30px 10px,rgba(0,0,0.2);
