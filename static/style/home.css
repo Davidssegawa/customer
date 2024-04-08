@@ -16,9 +16,7 @@ body {
     margin-top: 200px;
     /* padding: 35px; */
 }
-.container-2{
-    margin-left:50px;
-}
+
 .item{
     flex: 1;
     background-color: whitesmoke; /* Background color of the box */
@@ -43,11 +41,13 @@ body {
     align-items:center;
     margin-right:10px;
 }
-
-button{
+.container-2{
+    margin-left:50px;
+}
+.container-2 button{
     padding:4px 10px;
     margin-top:20px;
 }
-button a{
+.container-2 button a{
     text-decoration: none;
 }
