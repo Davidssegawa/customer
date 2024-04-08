@@ -9,9 +9,10 @@ body {
 /* Arrange items horizontally */
 .container {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     margin-bottom: 20px;
-    padding: 35px;
+    /* padding: 35px; */
 }
 .item{
     flex: 1;
