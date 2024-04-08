@@ -10,7 +10,21 @@ body {
 .container {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 20px;
 }
 .item{
-    margin: 0 10px;
+    flex: 1;
+    background-color: whitesmoke; /* Background color of the box */
+    padding: 10px; /* Padding inside the box */
+    border-radius: 5px; /* Rounded corners */
+    text-align: center;
+}
+
+.item a {
+    text-decoration: none;
+    color: whitesmoke;
+}
+
+button{
+    margin-top:20px;
 }
