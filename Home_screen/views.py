@@ -158,6 +158,7 @@ def chart_view(request):
 
 
 #PAYMENT OPTIONS 
+#OPTION 1: NO API
 
 # def prepayment(request):
 #     # Fetch prepayment options from FYP_server's API
@@ -205,6 +206,76 @@ def chart_view(request):
 #         # Handle error when transaction is not found
 #         return render(request, 'sections/purchase_confirmation_error.html')
 
+#OPTION 2: MOMO_API
+# def prepayment(request):
+#     # Fetch prepayment options from FYP_server's API
+#     response = requests.get('https://fyp-4.onrender.com/api/prepayment-options/')
+#     if response.status_code == 200:
+#         options_data = response.json()
+#         options = [(option['id'], f"{option['name']}, (UGx{option['price']})") for option in options_data]
+#     else:
+#         # If request fails, set options to an empty list
+#         options = []
+
+#     if request.method == 'POST':
+#         form = PrepaymentOptionForm(request.POST)
+#         form.fields['selected_option'].choices = options
+#         if form.is_valid():
+#             selected_option_id = form.cleaned_data['selected_option']
+#             phone_number = form.cleaned_data['phone_number']  # Retrieve the phone number from the form
+#             # Generate confirmation code
+#             confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+#             # Send transaction details to FYP_server's API
+#             transaction_data = {'selected_option': selected_option_id, 'confirmation_code': confirmation_code}
+#             transaction_response = requests.post('https://fyp-4.onrender.com/api/transactions/', data=transaction_data)
+#             if transaction_response.status_code == 201:
+#                 transaction_id = transaction_response.json()['id']
+#                 #return redirect('payment_confirmation', transaction_id=transaction_id)
+                
+#                 # Initialize MOMO API class
+#                 momo_api = PayClass()
+                
+#                 # Perform MOMO payment
+#                 momo_response = momo_api.momopay(form.cleaned_data['selected_option'][1], "EUR", transaction_id, phone_number, "Water payment")
+#                 print(momo_response["response"])
+#                 print(momo_response["ref"])
+#                 verify = momo_api.verifymomo(momo_response["ref"])
+#                 print(verify)
+#                 if momo_response["response"] == 202:  # Assuming successful payment
+#                     return HttpResponse(confirmation_code)  # Return the confirmation code as plain text
+#                 else:
+#                     # Handle payment failure
+#                     pass
+#     else:
+#         form = PrepaymentOptionForm()
+#         form.fields['selected_option'].choices = options
+
+#     return render(request, 'sections/Payment.html', {'form': form})
+
+# def payment_confirmation(request, transaction_id):
+#     # Fetch transaction details from the first project's API
+#     transaction_response = requests.get(f'https://fyp-4.onrender.com/api/transactions/{transaction_id}/')
+#     if transaction_response.status_code == 200:
+#         transaction_data = transaction_response.json()
+#         transaction = {
+#             'option_name': transaction_data['option']['name'],
+#             'confirmation_code': transaction_data['confirmation_code'],
+#         }
+#         return render(request, 'sections/purchase_confirmation.html', {'transaction': transaction})
+#     else:
+#         # Handle error when transaction is not found
+#         return render(request, 'sections/purchase_confirmation_error.html')
+
+
+#OPTION 3: STRIPE API
+
+import stripe
+from django.conf import settings
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from .forms import PrepaymentOptionForm
+import random
+import string
 
 def prepayment(request):
     # Fetch prepayment options from FYP_server's API
@@ -229,19 +300,25 @@ def prepayment(request):
             transaction_response = requests.post('https://fyp-4.onrender.com/api/transactions/', data=transaction_data)
             if transaction_response.status_code == 201:
                 transaction_id = transaction_response.json()['id']
-                #return redirect('payment_confirmation', transaction_id=transaction_id)
+                # Initialize Stripe API
+                stripe.api_key = settings.STRIPE_SECRET_KEY
                 
-                # Initialize MOMO API class
-                momo_api = PayClass()
+                # Create a Stripe PaymentIntent
+                payment_intent = stripe.PaymentIntent.create(
+                    amount=form.cleaned_data['selected_option'][1] * 100,  # Convert amount to cents
+                    currency='eur',
+                    description='Water payment',
+                    receipt_email=phone_number,
+                    payment_method_types=['card'],
+                    metadata={'transaction_id': transaction_id}
+                )
                 
-                # Perform MOMO payment
-                momo_response = momo_api.momopay(form.cleaned_data['selected_option'][1], "EUR", transaction_id, phone_number, "Water payment")
-                print(momo_response["response"])
-                print(momo_response["ref"])
-                verify = momo_api.verifymomo(momo_response["ref"])
-                print(verify)
-                if momo_response["response"] == 202:  # Assuming successful payment
-                    return HttpResponse(confirmation_code)  # Return the confirmation code as plain text
+                if payment_intent.status == 'requires_action':  
+                    # The payment requires additional actions, handle it according to the next action
+                    return HttpResponse(payment_intent.next_action)
+                elif payment_intent.status == 'succeeded':
+                    # Payment succeeded, return the confirmation code
+                    return HttpResponse(confirmation_code)
                 else:
                     # Handle payment failure
                     pass
@@ -250,17 +327,3 @@ def prepayment(request):
         form.fields['selected_option'].choices = options
 
     return render(request, 'sections/Payment.html', {'form': form})
-
-def payment_confirmation(request, transaction_id):
-    # Fetch transaction details from the first project's API
-    transaction_response = requests.get(f'https://fyp-4.onrender.com/api/transactions/{transaction_id}/')
-    if transaction_response.status_code == 200:
-        transaction_data = transaction_response.json()
-        transaction = {
-            'option_name': transaction_data['option']['name'],
-            'confirmation_code': transaction_data['confirmation_code'],
-        }
-        return render(request, 'sections/purchase_confirmation.html', {'transaction': transaction})
-    else:
-        # Handle error when transaction is not found
-        return render(request, 'sections/purchase_confirmation_error.html')
