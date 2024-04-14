@@ -81,6 +81,9 @@ def statistics(request):
 def payment(request):
     return render(request,'sections/Payment.html')
 
+@login_required(login_url='signin')
+def purchase_confirmation(request):
+    return render(request,'sections/purchase_confirmation.html')
 
 # def buy_water(request):
 #     if request.method == 'POST':
@@ -318,7 +321,7 @@ def prepayment(request):
                     return HttpResponse(payment_intent.next_action)
                 elif payment_intent.status == 'succeeded':
                     # Payment succeeded, return the confirmation code
-                    return HttpResponse(confirmation_code)
+                    return render(request, 'purchase_confirmation.html', {'confirmation_code': confirmation_code})
                 else:
                     # Handle payment failure
                     pass
