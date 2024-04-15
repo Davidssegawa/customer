@@ -183,6 +183,7 @@ def prepayment(request):
             selected_option_id = form.cleaned_data['selected_option']
             # Generate confirmation code
             confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+            print(confirmation_code)
             # Send transaction details to FYP_server's API
             transaction_data = {'selected_option': selected_option_id, 'confirmation_code': confirmation_code, "option_id":selected_option_id}
             transaction_response = requests.post('https://fyp-4.onrender.com/api/transactions/', data=transaction_data)
