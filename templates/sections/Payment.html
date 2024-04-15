@@ -39,7 +39,7 @@
 <body>
     <div class="container">
         <h1>Purchase water</h1>
-        <form method="post">
+        <form method="post" action="{% url 'purchase_confirmation' %}">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit">Pay Now</button>
