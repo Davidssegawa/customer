@@ -172,7 +172,7 @@ def prepayment(request):
     else:
         # If request fails, set options to an empty list
         options = []
-
+    print(options[1])
     # Define choices for selected_option field
     #selected_option = forms.ChoiceField(choices=options, widget=forms.RadioSelect)
 
