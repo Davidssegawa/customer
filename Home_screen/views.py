@@ -172,7 +172,6 @@ def prepayment(request):
     else:
         # If request fails, set options to an empty list
         options = []
-    print(options[1])
     # Define choices for selected_option field
     #selected_option = forms.ChoiceField(choices=options, widget=forms.RadioSelect)
 
@@ -182,7 +181,7 @@ def prepayment(request):
         if form.is_valid():
             selected_option_id = form.cleaned_data['selected_option']
             # Generate confirmation code
-            confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+            confirmation_code = f"{selected_option_id}-{''.join(random.choices(string.ascii_uppercase + string.digits, k=6))}"
             print(confirmation_code)
             # Send transaction details to FYP_server's API
             transaction_data = {'selected_option': selected_option_id, 'confirmation_code': confirmation_code, "option_id":selected_option_id}
