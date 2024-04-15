@@ -64,23 +64,23 @@ ROOT_URLCONF = 'backend.urls'
 
 
 
-# Set your Stripe API keys
-STRIPE_TEST_SECRET_KEY = 'sk_test_51P5QgXRo1izmTFNlEWwF8SSFihywO37Fs7NLS5QT2LBrTiR9kImQsR8YSm7Wyof0Dyqqn6hWrqfrGeRv9V8Oc0xM00vCDmmniS'
-STRIPE_TEST_PUBLIC_KEY = 'pk_test_51P5QgXRo1izmTFNl2tf5gmRTRpvuDmEBRBymGDosXHli5G6WXjyYfBWvJP7fz0B7HFP4orHTsEjeKUUy2ObpJjRw00Nh3gco8Q'
+# # Set your Stripe API keys
+# STRIPE_TEST_SECRET_KEY = 'sk_test_51P5QgXRo1izmTFNlEWwF8SSFihywO37Fs7NLS5QT2LBrTiR9kImQsR8YSm7Wyof0Dyqqn6hWrqfrGeRv9V8Oc0xM00vCDmmniS'
+# STRIPE_TEST_PUBLIC_KEY = 'pk_test_51P5QgXRo1izmTFNl2tf5gmRTRpvuDmEBRBymGDosXHli5G6WXjyYfBWvJP7fz0B7HFP4orHTsEjeKUUy2ObpJjRw00Nh3gco8Q'
 
-# Set the Stripe API version
-STRIPE_API_VERSION = '2020-08-27'  # You can find the latest API version in the Stripe documentation
+# # Set the Stripe API version
+# STRIPE_API_VERSION = '2020-08-27'  # You can find the latest API version in the Stripe documentation
 
-# Ensure that the Stripe API keys are available in the environment
-STRIPE_SECRET_KEY = os.getenv('STRIPE_TEST_SECRET_KEY')
-STRIPE_PUBLIC_KEY = os.getenv('STRIPE_TEST_PUBLIC_KEY')
+# # Ensure that the Stripe API keys are available in the environment
+# STRIPE_SECRET_KEY = os.getenv('STRIPE_TEST_SECRET_KEY')
+# STRIPE_PUBLIC_KEY = os.getenv('STRIPE_TEST_PUBLIC_KEY')
 
 
-# Define a custom context processor to include the Stripe API keys in the template context
-def stripe_keys(request):
-    return {
-        'STRIPE_PUBLIC_KEY': STRIPE_PUBLIC_KEY,
-    }
+# # Define a custom context processor to include the Stripe API keys in the template context
+# def stripe_keys(request):
+#     return {
+#         'STRIPE_PUBLIC_KEY': STRIPE_PUBLIC_KEY,
+#     }
 
 
 
@@ -96,7 +96,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'Home_screen.context_processors.stripe_keys', 
+                #'Home_screen.context_processors.stripe_keys', 
             ],
         },
     },

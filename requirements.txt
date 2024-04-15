@@ -18,4 +18,3 @@ plotly
 pandas
 requests
 basicauth
-stripe

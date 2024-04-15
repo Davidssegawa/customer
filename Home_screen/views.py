@@ -163,51 +163,52 @@ def chart_view(request):
 #PAYMENT OPTIONS 
 #OPTION 1: NO API
 
-# def prepayment(request):
-#     # Fetch prepayment options from FYP_server's API
-#     response = requests.get('https://fyp-4.onrender.com/api/prepayment-options/')
-#     if response.status_code == 200:
-#         options_data = response.json()
-#         options = [(option['id'], f"{option['name']}, (UGx{option['price']})") for option in options_data]
-#     else:
-#         # If request fails, set options to an empty list
-#         options = []
+def prepayment(request):
+    # Fetch prepayment options from FYP_server's API
+    response = requests.get('https://fyp-4.onrender.com/api/prepayment-options/')
+    if response.status_code == 200:
+        options_data = response.json()
+        options = [(option['id'], f"{option['name']}, (UGx{option['price']})") for option in options_data]
+    else:
+        # If request fails, set options to an empty list
+        options = []
 
-#     # Define choices for selected_option field
-#     #selected_option = forms.ChoiceField(choices=options, widget=forms.RadioSelect)
+    # Define choices for selected_option field
+    #selected_option = forms.ChoiceField(choices=options, widget=forms.RadioSelect)
 
-#     if request.method == 'POST':
-#         form = PrepaymentOptionForm(request.POST)
-#         form.fields['selected_option'].choices = options
-#         if form.is_valid():
-#             selected_option_id = form.cleaned_data['selected_option']
-#             # Generate confirmation code
-#             confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
-#             # Send transaction details to FYP_server's API
-#             transaction_data = {'selected_option': selected_option_id, 'confirmation_code': confirmation_code}
-#             transaction_response = requests.post('https://fyp-4.onrender.com/api/transactions/', data=transaction_data)
-#             if transaction_response.status_code == 201:
-#                 transaction_id = transaction_response.json()['id']
-#                 return redirect('payment_confirmation', transaction_id=transaction_id)
-#     else:
-#         form = PrepaymentOptionForm()
-#         form.fields['selected_option'].choices =options
+    if request.method == 'POST':
+        form = PrepaymentOptionForm(request.POST)
+        form.fields['selected_option'].choices = options
+        if form.is_valid():
+            selected_option_id = form.cleaned_data['selected_option']
+            # Generate confirmation code
+            confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+            # Send transaction details to FYP_server's API
+            transaction_data = {'selected_option': selected_option_id, 'confirmation_code': confirmation_code, "option_id":selected_option_id}
+            transaction_response = requests.post('https://fyp-4.onrender.com/api/transactions/', data=transaction_data)
+            if transaction_response.status_code == 201:
+                transaction_id = transaction_response.json()['id']
+                return redirect('payment_confirmation', transaction_id=transaction_id)
+    else:
+        form = PrepaymentOptionForm()
+        form.fields['selected_option'].choices =options
 
-#     return render(request, 'sections/Payment.html', {'form': form})
+    return render(request, 'sections/Payment.html', {'form': form})
 
-# def payment_confirmation(request, transaction_id):
-#     # Fetch transaction details from the first project's API
-#     transaction_response = requests.get(f'https://fyp-4.onrender.com/api/transactions/{transaction_id}/')
-#     if transaction_response.status_code == 200:
-#         transaction_data = transaction_response.json()
-#         transaction = {
-#             'option_name': transaction_data['option']['name'],
-#             'confirmation_code': transaction_data['confirmation_code'],
-#         }
-#         return render(request, 'sections/purchase_confirmation.html', {'transaction': transaction})
-#     else:
-#         # Handle error when transaction is not found
-#         return render(request, 'sections/purchase_confirmation_error.html')
+def payment_confirmation(request, transaction_id):
+    # Fetch transaction details from the first project's API
+    transaction_response = requests.get(f'https://fyp-4.onrender.com/api/transactions/{transaction_id}/')
+    if transaction_response.status_code == 200:
+        transaction_data = transaction_response.json()
+        transaction = {
+            'option_name': transaction_data['option']['name'],
+            'confirmation_code': transaction_data['confirmation_code'],
+            'option_id':transaction_data['option_id']
+        }
+        return render(request, 'sections/purchase_confirmation.html', {'transaction': transaction})
+    else:
+        # Handle error when transaction is not found
+        return render(request, 'sections/purchase_confirmation_error.html')
 
 #OPTION 2: MOMO_API
 # def prepayment(request):
@@ -272,7 +273,7 @@ def chart_view(request):
 
 #OPTION 3: STRIPE API
 
-import stripe
+'''import stripe
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -295,7 +296,7 @@ def prepayment(request):
         form.fields['selected_option'].choices = options
         if form.is_valid():
             selected_option_id = form.cleaned_data['selected_option']
-            phone_number = form.cleaned_data['phone_number']  # Retrieve the phone number from the form
+            #phone_number = form.cleaned_data['phone_number']  # Retrieve the phone number from the form
             # Generate confirmation code
             confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
             # Send transaction details to FYP_server's API
@@ -311,7 +312,7 @@ def prepayment(request):
                     amount=form.cleaned_data['selected_option'][1] * 100,  # Convert amount to cents
                     currency='eur',
                     description='Water payment',
-                    receipt_email=phone_number,
+                    #receipt_email=phone_number,
                     payment_method_types=['card'],
                     metadata={'transaction_id': transaction_id}
                 )
@@ -329,4 +330,4 @@ def prepayment(request):
         form = PrepaymentOptionForm()
         form.fields['selected_option'].choices = options
 
-    return render(request, 'sections/Payment.html', {'form': form})
+    return render(request, 'sections/Payment.html', {'form': form})'''
