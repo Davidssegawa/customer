@@ -188,6 +188,7 @@ def prepayment(request):
             transaction_response = requests.post('https://fyp-4.onrender.com/api/transactions/', data=transaction_data)
             if transaction_response.status_code == 201:
                 transaction_id = transaction_response.json()['id']
+                print(transaction_id)
                 return redirect('purchase_confirmation', transaction_id=transaction_id)
             else:
                 # Handle error when transaction is not found
