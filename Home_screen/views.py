@@ -208,20 +208,20 @@ def prepayment(request):
     return render(request, 'sections/Payment.html', {'form': form})
 
 
-# def payment_confirmation(request, transaction_id):
-#     # Fetch transaction details from the first project's API
-#     transaction_response = requests.get(f'https://fyp-4.onrender.com/api/transactions/{transaction_id}/')
-#     if transaction_response.status_code == 200:
-#         transaction_data = transaction_response.json()
-#         transaction = {
-#             'option_name': transaction_data['option']['name'],
-#             'confirmation_code': transaction_data['confirmation_code'],
-#             'option_id':transaction_data['option_id']
-#         }
-#         return render(request, 'sections/purchase_confirmation.html', {'transaction': transaction})
-#     else:
-#         # Handle error when transaction is not found
-#         return render(request, 'sections/purchase_confirmation_error.html')
+def payment_confirmation(request, transaction_id):
+    # Fetch transaction details from the first project's API
+    transaction_response = requests.get(f'https://fyp-4.onrender.com/api/transactions/{transaction_id}/')
+    if transaction_response.status_code == 200:
+        transaction_data = transaction_response.json()
+        transaction = {
+            'option_name': transaction_data['option']['name'],
+            'confirmation_code': transaction_data['confirmation_code'],
+            'option_id':transaction_data['option_id']
+        }
+        return render(request, 'sections/purchase_confirmation.html', {'transaction': transaction})
+    else:
+        # Handle error when transaction is not found
+        return render(request, 'sections/purchase_confirmation_error.html')
 
 #OPTION 2: MOMO_API
 # def prepayment(request):
