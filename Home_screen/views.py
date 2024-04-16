@@ -169,9 +169,9 @@ import random
 import string
 import requests
 
-def generate_confirmation_code(length=10):
+def generate_confirmation_code(selected_option_id,length=10):
     """Generate a random confirmation code."""
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
+    return f"{selected_option_id}-{''.join(random.choices(string.ascii_uppercase + string.digits, k=length))}"
 
 def prepayment(request):
     # Fetch prepayment options from FYP_server's API
