@@ -187,7 +187,7 @@ def prepayment(request):
         form = PrepaymentOptionForm(request.POST)
         form.fields['selected_option'].choices = options
         if form.is_valid():
-            selected_option_id = form.cleaned_data['selected_option']
+            selected_option_id = int(form.cleaned_data['selected_option'])
             # Generate confirmation code and store it in the session
             request.session['confirmation_code'] = generate_confirmation_code()
             confirmation_code = request.session.get('confirmation_code')
