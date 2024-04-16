@@ -163,6 +163,13 @@ def chart_view(request):
 #PAYMENT OPTIONS 
 #OPTION 1: NO API
 
+import random
+import string
+
+def generate_confirmation_code(length=10):
+    """Generate a random confirmation code."""
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
+
 def prepayment(request):
     # Fetch prepayment options from FYP_server's API
     response = requests.get('https://fyp-4.onrender.com/api/prepayment-options/')
@@ -172,8 +179,6 @@ def prepayment(request):
     else:
         # If request fails, set options to an empty list
         options = []
-    # Define choices for selected_option field
-    #selected_option = forms.ChoiceField(choices=options, widget=forms.RadioSelect)
 
     if request.method == 'POST':
         form = PrepaymentOptionForm(request.POST)
@@ -181,21 +186,19 @@ def prepayment(request):
         if form.is_valid():
             selected_option_id = form.cleaned_data['selected_option']
             # Generate confirmation code
-            confirmation_code = f"{selected_option_id}-{''.join(random.choices(string.ascii_uppercase + string.digits, k=6))}"
-            print("confirmation code",confirmation_code)
+            confirmation_code = generate_confirmation_code()
             # Send transaction details to FYP_server's API
-            transaction_data = {'selected_option': selected_option_id, 'confirmation_code': confirmation_code, "option_id":selected_option_id}
+            transaction_data = {'selected_option': selected_option_id, 'confirmation_code': confirmation_code}
             transaction_response = requests.post('https://fyp-4.onrender.com/api/transactions/', data=transaction_data)
             if transaction_response.status_code == 201:
                 transaction_id = transaction_response.json()['id']
-                print(transaction_id)
                 return redirect('purchase_confirmation', transaction_id=transaction_id)
             else:
                 # Handle error when transaction is not found
                 return render(request, 'sections/purchase_confirmation_error.html')
     else:
         form = PrepaymentOptionForm()
-        form.fields['selected_option'].choices =options
+        form.fields['selected_option'].choices = options
 
     return render(request, 'sections/Payment.html', {'form': form})
 
