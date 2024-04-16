@@ -163,8 +163,11 @@ def chart_view(request):
 #PAYMENT OPTIONS 
 #OPTION 1: NO API
 
+from django.shortcuts import render, redirect
+from .forms import PrepaymentOptionForm
 import random
 import string
+import requests
 
 def generate_confirmation_code(length=10):
     """Generate a random confirmation code."""
@@ -185,10 +188,10 @@ def prepayment(request):
         form.fields['selected_option'].choices = options
         if form.is_valid():
             selected_option_id = form.cleaned_data['selected_option']
-            # Generate confirmation code
-            confirmation_code = generate_confirmation_code()
+            # Generate confirmation code and store it in the session
+            request.session['confirmation_code'] = generate_confirmation_code()
             # Send transaction details to FYP_server's API
-            transaction_data = {'selected_option': selected_option_id, 'confirmation_code': confirmation_code}
+            transaction_data = {'selected_option': selected_option_id, 'confirmation_code': request.session.get('confirmation_code')}
             transaction_response = requests.post('https://fyp-4.onrender.com/api/transactions/', data=transaction_data)
             if transaction_response.status_code == 201:
                 transaction_id = transaction_response.json()['id']
@@ -201,6 +204,7 @@ def prepayment(request):
         form.fields['selected_option'].choices = options
 
     return render(request, 'sections/Payment.html', {'form': form})
+
 
 # def payment_confirmation(request, transaction_id):
 #     # Fetch transaction details from the first project's API
