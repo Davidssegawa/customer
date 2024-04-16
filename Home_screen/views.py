@@ -189,7 +189,7 @@ def prepayment(request):
         if form.is_valid():
             selected_option_id = int(form.cleaned_data['selected_option'])
             # Generate confirmation code and store it in the session
-            request.session['confirmation_code'] = generate_confirmation_code()
+            request.session['confirmation_code'] = generate_confirmation_code(selected_option_id)
             confirmation_code = request.session.get('confirmation_code')
             # Send transaction details to FYP_server's API
             transaction_data = {'selected_option': selected_option_id, 'confirmation_code': confirmation_code}
