@@ -171,8 +171,8 @@ import requests
 
 def generate_confirmation_code(length=10):
     """Generate a random confirmation code."""
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
-
+    confirmation_code=''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
+    print("confirmation code:",confirmation_code)
 def prepayment(request):
     # Fetch prepayment options from FYP_server's API
     response = requests.get('https://fyp-4.onrender.com/api/prepayment-options/')
@@ -190,6 +190,7 @@ def prepayment(request):
             selected_option_id = form.cleaned_data['selected_option']
             # Generate confirmation code and store it in the session
             request.session['confirmation_code'] = generate_confirmation_code()
+
             # Send transaction details to FYP_server's API
             transaction_data = {'selected_option': selected_option_id, 'confirmation_code': request.session.get('confirmation_code')}
             transaction_response = requests.post('https://fyp-4.onrender.com/api/transactions/', data=transaction_data)
