@@ -178,6 +178,7 @@ def prepayment(request):
     if request.method == 'POST':
         form = PrepaymentOptionForm(request.POST)
         form.fields['selected_option'].choices = options
+        print(form.fields)
         if form.is_valid():
             selected_option_id = form.cleaned_data['selected_option']
             # Generate confirmation code
