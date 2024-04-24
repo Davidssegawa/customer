@@ -231,9 +231,10 @@ def water_purchase(request):
     if request.method == 'POST':
         form = WaterPurchaseForm(request.POST)
         if form.is_valid():
-            liters_to_buy = form.cleaned_data['liters_to_buy']
+            amount_paid = form.cleaned_data['amount_paid']
             # Call API endpoint to create a water purchase transaction
-            transaction_data = {'liters_purchased': liters_to_buy}
+            liters_purchase = amount_paid/4224
+            transaction_data = {'Amount_spent': amount_paid,'liters_bought': liters_purchase}
             response = requests.post('https://fyp-4.onrender.com/api/water-purchase/', data=transaction_data)
             if response.status_code == 201:
                 return redirect('sections/purchase_confirmation', transaction_id=response.json()['id'])

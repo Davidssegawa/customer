@@ -34,7 +34,7 @@ class PrepaymentOptionForm(forms.Form):
     #phone_number = forms.CharField(max_length=15, label="Phone Number", widget=forms.TextInput(attrs={'placeholder': 'Enter your phone number'}))
 # water_purchase/forms.py
 
-from django import forms
 
 class WaterPurchaseForm(forms.Form):
-    liters_to_buy = forms.IntegerField(label='Liters to Buy', min_value=1)
+    amount_paid = forms.DecimalField(label='amount_paid', max_digits=10, decimal_places=2)
+
