@@ -239,7 +239,7 @@ def water_purchase(request):
                 return redirect('sections/purchase_confirmation', transaction_id=response.json()['id'])
     else:
         form = WaterPurchaseForm()
-    return render(request, 'sections/payment.html', {'form': form})
+    return render(request, 'sections/Payment.html', {'form': form})
 
 def purchase_confirmation(request, transaction_id):
     # Fetch transaction details from the API
