@@ -163,7 +163,7 @@ def chart_view(request):
 #PAYMENT OPTIONS 
 #OPTION 1: NO API
 
-from django.shortcuts import render, redirect
+'''from django.shortcuts import render, redirect
 from .forms import PrepaymentOptionForm
 import random
 import string
@@ -221,7 +221,36 @@ def prepayment(request):
         
 #     else:
 #         # Handle error when transaction is not found
-#         return render(request, 'sections/purchase_confirmation_error.html')
+#         return render(request, 'sections/purchase_confirmation_error.html')'''
+
+
+
+from .forms import WaterPurchaseForm
+
+def water_purchase(request):
+    if request.method == 'POST':
+        form = WaterPurchaseForm(request.POST)
+        if form.is_valid():
+            liters_to_buy = form.cleaned_data['liters_to_buy']
+            # Call API endpoint to create a water purchase transaction
+            transaction_data = {'liters_purchased': liters_to_buy}
+            response = requests.post('https://fyp-4.onrender.com/api/water-purchase/', data=transaction_data)
+            if response.status_code == 201:
+                return redirect('purchase_confirmation', transaction_id=response.json()['id'])
+    else:
+        form = WaterPurchaseForm()
+    return render(request, 'water_purchase/water_purchase.html', {'form': form})
+
+def purchase_confirmation(request, transaction_id):
+    # Fetch transaction details from the API
+    response = requests.get(f'https://fyp-4.onrender.com/api/water-purchase/{transaction_id}/')
+    if response.status_code == 200:
+        transaction_data = response.json()
+        return render(request, 'water_purchase/purchase_confirmation.html', {'transaction': transaction_data})
+    else:
+        # Handle error when transaction is not found
+        return render(request, 'water_purchase/purchase_confirmation_error.html')
+
 
 #OPTION 2: MOMO_API
 # def prepayment(request):

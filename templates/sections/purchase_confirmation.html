@@ -1,15 +1,15 @@
-<!-- <!DOCTYPE html>
+<!-- payment_confirmation.html (Project 2) -->
+
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Purchase Confirmation</title>
+    <title>Payment Confirmation</title>
 </head>
 <body>
-    <h1>Thank You for Your Purchase!</h1>
-    <p>You have successfully bought {{ unit.name }} for ${{ unit.price }}.</p>
+    <h2>Payment Confirmation</h2>
+    <p>Transaction ID: {{ transaction_data.id }}</p>
+    <p>Amount Liters: {{ transaction_data.amount_liters }}</p>
+    <p>Price Paid: {{ transaction_data.price_paid }}</p>
+    <p>Timestamp: {{ transaction_data.timestamp }}</p>
 </body>
-</html> -->
-
-
-<p>Thank you for your payment! Your confirmation code is: {{ transaction.confirmation_code }}</p>
-<p>Option chosen: {{ transaction.option.name }}</p>
-<p>Option ID for IoT device: {{ transaction.option.id }}</p>
+</html>
