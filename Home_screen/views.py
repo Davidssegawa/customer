@@ -236,20 +236,20 @@ def water_purchase(request):
             transaction_data = {'liters_purchased': liters_to_buy}
             response = requests.post('https://fyp-4.onrender.com/api/water-purchase/', data=transaction_data)
             if response.status_code == 201:
-                return redirect('purchase_confirmation', transaction_id=response.json()['id'])
+                return redirect('sections/purchase_confirmation', transaction_id=response.json()['id'])
     else:
         form = WaterPurchaseForm()
-    return render(request, 'water_purchase/water_purchase.html', {'form': form})
+    return render(request, 'sections/payment.html', {'form': form})
 
 def purchase_confirmation(request, transaction_id):
     # Fetch transaction details from the API
     response = requests.get(f'https://fyp-4.onrender.com/api/water-purchase/{transaction_id}/')
     if response.status_code == 200:
         transaction_data = response.json()
-        return render(request, 'water_purchase/purchase_confirmation.html', {'transaction': transaction_data})
+        return render(request, 'sections/purchase_confirmation.html', {'transaction': transaction_data})
     else:
         # Handle error when transaction is not found
-        return render(request, 'water_purchase/purchase_confirmation_error.html')
+        return render(request, 'sections/purchase_confirmation_error.html')
 
 
 #OPTION 2: MOMO_API
